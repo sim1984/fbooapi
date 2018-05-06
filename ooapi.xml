@@ -4,13 +4,6 @@
         <title>Firebird interfaces</title>
     </info>
 
-    <note>
-        <title>Примечание переводчика</title>
-
-        <para>Описываемые интерфейсы генерируются с помощью CLOOP на основе
-                <filename>include/firebird/FirebirdInterface.idl</filename>.</para>
-    </note>
-
     <para>Объектно-оринтированный API Firebird (далее OO API) базируется на использовании
         интерфейсов. Эти интерфейсы, хотя и рассматриваются с точки зрения сравнения с
         OLE2-интерфейсами (некоторые из них имеют методы <methodname>addRef()</methodname> и
@@ -3904,7 +3897,7 @@ const unsigned char* getBuffer(StatusType* status)
             <title>Плагин шифрования данных передаваемых по сети</title>
 
             <para>Алгоритмы, выполняющие шифрование данных для разных целей, хорошо известны на
-                протяжении многих лет. Единственной «маленькой» типичной проблемой остается то, где
+                протяжении многих лет. Единственной "маленькой" типичной проблемой остается то, где
                 можно получить секретный ключ, который будет использоваться этим алгоритмом. К
                 счастью для шифрования сетевого трафика есть одно хорошее решение — уникальный ключ
                 шифрования должен быть сгенерирован плагином аутентификации. По крайней мере, по
@@ -3933,12 +3926,13 @@ const unsigned char* getBuffer(StatusType* status)
                         хранения ключа, предоставленного плагином аутентификации, и передает его в
                         плагин шифрования сетевого трафика. Этот интерфейс следует использовать
                         следующим образом: когда плагин аутентификации сервера или клиента готов
-                        предоставить ключ, то он запрашивает
-                            <interfacename>IServerBlock</interfacename> или
-                            <interfacename>IClientBlock</interfacename> для создания нового
-                        интерфейса <interfacename>ICryptKey</interfacename> и хранит в нем ключ.
-                        Подходящий для <interfacename>IWireCryptPlugin</interfacename> тип ключа
-                        будет выбран Firebird и передан этому интерфейсу.</para>
+                        предоставить ключ, то он запрашивает <link
+                            linkend="fbapi-interfaces-iserverblock">IServerBlock</link> или <link
+                            linkend="fbapi-interfaces-iclientblock">IClientBlock</link> для создания
+                        нового интерфейса <interfacename>ICryptKey</interfacename> и хранит в нем
+                        ключ. Подходящий для <link linkend="fbapi-interfaces-iwirecryptplugin"
+                            >IWireCryptPlugin</link> тип ключа будет выбран Firebird и передан этому
+                        интерфейсу.</para>
                 </formalpara>
 
                 <para><orderedlist>
@@ -4088,9 +4082,9 @@ void decrypt(StatusType* status,
 
                     <para>Интерфейс <interfacename>IAuth</interfacename> не содержит методов, только
                         некоторые константы, определяющие коды, возвращаются из метода
-                            <methodname>authenticate()</methodname> в
-                            <interfacename>IClient</interfacename> и
-                            <interfacename>IServer</interfacename>.</para>
+                            <methodname>authenticate()</methodname> в <link
+                            linkend="fbapi-interfaces-iclient">IClient</link> и <link
+                            linkend="fbapi-interfaces-iserver">IServer</link>.</para>
                 </formalpara>
 
                 <para>
@@ -4246,8 +4240,8 @@ int authenticate(StatusType* status,
                                 создается некоторый элемент аутентификации, его следует добавить в
                                 блок аутентификации с помощью
                                     <replaceable>writerInterface</replaceable>. Возможные значения
-                                возврата определяются в интерфейсе
-                                    <interfacename>IAuth</interfacename>. </para>
+                                возврата определяются в интерфейсе <link
+                                    linkend="fbapi-interfaces-iauth">IAuth</link>. </para>
                         </listitem>
                     </orderedlist></para>
             </section>
@@ -4255,7 +4249,7 @@ int authenticate(StatusType* status,
         <section>
             <title>Плагин аутентификации на клиентской стороне</title>
 
-            <section xml:id="fbapi-interfaces-icrypblock">
+            <section xml:id="fbapi-interfaces-iclientblock">
                 <info>
                     <title>IClientBlock</title>
                     <keywordset>
@@ -4365,8 +4359,8 @@ int authenticate(StatusType* status,
                 Запись, описывающая пользователя, состоит из нескольких полей, и поддерживать
                 выполнение нескольких операций, таких как добавление пользователя, изменение
                 пользователя, получение списка пользователей и т. д. Плагин должен уметь
-                интерпретировать команды, полученные в интерфейсе
-                    <interfacename>IUser</interfacename>.</para>
+                интерпретировать команды, полученные в интерфейсе <link
+                    linkend="fbapi-interfaces-iuser">IUser</link>.</para>
 
             <section xml:id="fbapi-interfaces-iuserfield">
                 <info>
@@ -4627,9 +4621,10 @@ void clear(StatusType* status)
 
                     <para>Интерфейс <interfacename>IListUsers</interfacename> — это обратный вызов,
                         используемый плагином проверки подлинности при запросе списка пользователей.
-                        Плагин заполняет интерфейс <interfacename>IUser</interfacename> для всех
-                        элементов в списке пользователей один за другим и для каждого пользователя
-                        вызывает метод <methodname>list()</methodname> этого интерфейса.</para>
+                        Плагин заполняет интерфейс <link linkend="fbapi-interfaces-iuser"
+                            >IUser</link> для всех элементов в списке пользователей один за другим и
+                        для каждого пользователя вызывает метод <methodname>list()</methodname>
+                        этого интерфейса.</para>
                 </formalpara>
 
                 <para><orderedlist>
@@ -4902,13 +4897,15 @@ void setKey(StatusType* status,
 ]]>
 </programlisting> используется для предоставления информации плагину шифрования базы данных о
                                 ключе шифрования. Firebird никогда не передает ключи для этого типа
-                                плагина напрямую. Вместо этого массив
-                                    <interfacename>IKeyHolderPlugins</interfacename> заданной длины
-                                передается в плагин шифрования, который должен получить от одного из
-                                них интерфейс <interfacename>ICryptKeyCallback</interfacename> и
-                                затем получить ключ, используя его. Параметр
-                                    <replaceable>keyName</replaceable> — это имя ключа, которое было
-                                введено в операторе <code>ALTER DATABASE ENCRYPT ...</code>. </para>
+                                плагина напрямую. Вместо этого массив <link
+                                    linkend="fbapi-interfaces-ikeyholderplugin"
+                                    >IKeyHolderPlugins</link> заданной длины передается в плагин
+                                шифрования, который должен получить от одного из них интерфейс <link
+                                    linkend="fbapi-interfaces-icryptkeycallback"
+                                    >ICryptKeyCallback</link> и затем получить ключ, используя его.
+                                Параметр <replaceable>keyName</replaceable> — это имя ключа, которое
+                                было введено в операторе <code>ALTER DATABASE ENCRYPT ...</code>.
+                            </para>
                         </listitem>
                         <listitem>
                             <para/>
@@ -4979,9 +4976,10 @@ void setInfo(StatusType* status,
 int keyCallback(StatusType* status, 
                 ICryptKeyCallback* callback)
 ]]>
-</programlisting> используется для передачи интерфейса
-                                    <interfacename>ICryptKeyCallback</interfacename> в подключение
-                                (если он предоставляется пользователем с вызовом
+</programlisting> используется для передачи интерфейса <link
+                                    linkend="fbapi-interfaces-icryptkeycallback"
+                                    >ICryptKeyCallback</link> в подключение (если он предоставляется
+                                пользователем с вызовом
                                     <methodname>IProvider::setDbCryptCallback()</methodname>). Этот
                                 вызов всегда выполняется в момент подключения к базе данных, и
                                 некоторые держатели ключа могут отклонить подключение, если не был
@@ -4995,12 +4993,12 @@ ICryptKeyCallback* keyHandle(StatusType* status,
                              const char* keyName)
 ]]>
 </programlisting> предназначен для непосредственного вызова интерфейсом
-                                    <interfacename>IDbCryptPlugin</interfacename> для получения
+                                    <link linkend="fbapi-interfaces-idbcryptplugin">IDbCryptPlugin</link> для получения
                                 интерфейса обратного вызова для именованного ключа из держателя
                                 ключа. Это позволяет использовать код Firebird с открытым исходным
                                 кодом так, чтобы никогда не касаться фактических ключей, избегая
                                 возможности кражи ключа, изменяющим код Firebird. После получения
-                                интерфейса <interfacename>ICryptKeyCallback</interfacename> плагин
+                                интерфейса <link linkend="fbapi-interfaces-icryptkeycallback">ICryptKeyCallback</link> плагин
                                 шифрования запускает обмен данными, используя его. Держатель ключа
                                 может (например) проверить цифровую подпись плагина шифрования перед
                                 отправкой ему ключа, чтобы избежать использования модифицированного

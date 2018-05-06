@@ -125,6 +125,7 @@
     </meta>
     <projectTree name="fbapi.xpr">
         <file name="fbapi.xml"/>
+        <file name="intro.xml"/>
         <file name="ooapi.xml"/>
     </projectTree>
 </project>
