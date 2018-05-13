@@ -3,13 +3,13 @@
     <info>
         <title>Введение</title>
     </info>
-    <para> Это руководство объектно-ориентированную версию API Firebird 3.0. </para>
+    <para> Это руководство описывает объектно-ориентированную версию API Firebird 3.0. </para>
     <para>Данный документ является переводом файла <filename>doc/Using_OO_API.html</filename>,
         который входит в поставку Firebird.</para>
     <para>Описываемые интерфейсы находятся в файле
             <filename>include/firebird/FirebirdInterface.idl</filename>. С помощью инструмента
             <application>CLOOP</application> на основе этого IDL файла можно сгенерировать файл
-        интерфейсов для конретного языка программирования (<filename>IdlFbInterfaces.h</filename>
+        интерфейсов для конкретного языка программирования (<filename>IdlFbInterfaces.h</filename>
         или <filename>Firebird.pas</filename>).</para>
     <para> CLOOP — Cross Language Object Oriented Programming. Этот инструмент не входит в поставку
         Firebird. Его можно найти в исходных кодах <link xmlns:xlink="http://www.w3.org/1999/xlink"
