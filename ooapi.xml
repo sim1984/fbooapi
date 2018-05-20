@@ -1,9 +1,8 @@
-<!DOCTYPE chapter>   
+<!DOCTYPE chapter>
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="ru" xml:id="fbapi">
     <info>
         <title>Firebird interfaces</title>
     </info>
-
     <para>Объектно-оринтированный API Firebird (далее OO API) базируется на использовании
         интерфейсов. Эти интерфейсы, хотя и рассматриваются с точки зрения сравнения с
         OLE2-интерфейсами (некоторые из них имеют методы <methodname>addRef()</methodname> и
@@ -23,7 +22,6 @@
         никакой разницы, хотя в Pascal отсутствуют некоторые дополнительные языковые функции,
         присутствующие в C++ (например, возможность отключить автоматическую проверку статуса после
         вызовов API).</para>
-
     <para>Обычно API базы данных используется для доступа к данным, хранящимся в базе данных.
         Firebird OO API, безусловно, выполняет эту задачу, кроме того оно поддерживает создание
         собственных плагинов — модулей, которые позволяют расширить возможности Firebird в
@@ -34,13 +32,11 @@
         планируете написать какой-то плагин, лучше начать с чтения первой части этого документа.
         Кроме того, многим плагинам необходимо обращаться к самим базам данных, и для этого
         необходим API доступа к данным.</para>
-
     <para>Пакет установки Firebird содержит ряд живых примеров использования OO API — они находятся
         в каталогах <filename>examples/interfaces</filename> (доступ к базе данных) и
             <filename>examples/dbcrypt</filename> (плагин, выполняющий фиктивное шифрование базы
         данных). Предполагается, что читатель знаком с ISC API, используемым в Firebird, со времён
         Interbase.</para>
-
     <para>Данный документ не претендует на полноту документации Firebird 3 — он просто описывает
         новый объектно-ориентированный API, и читатель должен быть знаком с основными концепциями
         Firebird, кроме того очень приветствуются знания о ISC API. Например, при описании работы со
@@ -52,13 +48,10 @@
         firebird) и т. д. Основная цель — сделать этот текст применимым не только для программистов
         C++, потому что наш API ориентирован на поддержку не только C++ но для других, более простых
         языков тоже.</para>
-
     <section xml:id="fbapi-dbaccess">
         <title>Доступ к базам данных</title>
-
         <section xml:id="fbapi-dbaccess-connect">
             <title>Созданеи базы данных и соедиенение с существующей базой данных</title>
-
             <para>Прежде всего нам нужно получить доступ к интерфейсу <link
                     linkend="fbapi-interfaces-imaster">IMaster</link>.
                     <interfacename>IMaster</interfacename> — это основной интерфейс Firebird,
@@ -74,7 +67,6 @@
 static IMaster* master = fb_get_master_interface();    
             </programlisting>
             </para>
-
             <para>Для многих методов, используемых в API Firebird, первым параметром является
                 интерфейс <link linkend="fbapi-interfaces-istatus">IStatus</link>. Это логичная
                 замена ISC_STATUS_ARRAY, но работает отдельно с ошибками и предупреждениями (не
@@ -89,12 +81,10 @@ IStatus* st = master->getStatus();
 ]]>
             </programlisting>
             </para>
-
             <para>Если по какой-либо причине метод <methodname>getStatus()</methodname> не работает
                 (OOM для примера), то он возврщает NULL — в этом случае очевидно, что мы не можем
                 использовать общий метод для сообщений об ошибке, основанный на
                     <interfacename>IStatus</interfacename>.</para>
-
             <para>Теперь мы рассмотрим первый интерфейс, напрямую связанный с вызовами базы данных.
                 Это <link linkend="fbapi-interfaces-iprovider">IProvider</link>-интерфейс,
                 называемый таким образом, потому что именно этот интерфейс должен быть реализован
@@ -129,7 +119,6 @@ IXpbBuilder* dpb = utl->getXpbBuilder(&status, IXpbBuilder::DPB, NULL, 0);
 ]]>
             </programlisting>
             </para>
-
             <para>Этот код создает пустой конструктор блоков параметров типа DPB. Теперь добавление
                 необходимого параметра в него тривиально: <programlisting language="cpp">
 <![CDATA[
@@ -141,7 +130,6 @@ dpb->insertString(&status, isc_dpb_user_name, "sysdba");
 dpb->insertString(&status, isc_dpb_password, "masterkey");
 ]]>
             </programlisting> смысл которых понятен. </para>
-
             <para><emphasis role="bold">Следующее приведено для C++</emphasis>: мы почти готовы
                 вызвать метода <methodname>createDatabase()</methodname> экземпляра
                     <interfacename>IProvider</interfacename>, но перед этим необходимо сказать
@@ -201,7 +189,6 @@ catch (const FbException& error)
                     <methodname>formatStatus()</methodname>. Она возвращает буфер с текстом,
                 описывающим ошибку (предупреждение), сохранённую в параметре
                     <interfacename>IStatus</interfacename>.</para>
-
             <para>Чтобы подключиться к существующей базе данных используйте метод
                     <methodname>attachDatabase()</methodname> интефейса
                     <interfacename>IProvider</interfacename> вместо
@@ -221,11 +208,9 @@ att = prov->attachDatabase(&status, "fbtests.fdb", 0, NULL);
                 примеры создания базы данных — <filename>01.create.cpp</filename> и
                     <filename>01.create.pas</filename>. При чтении данного документа, полезно
                 построить (build) примеры и попытаться запустить их.</para>
-
         </section>
         <section xml:id="fbapi-dbaccess-trans">
             <title>Работа с транзакциями</title>
-
             <para>Только создание пустых баз данных определенно недостаточно для работы с РСУБД. Мы
                 хотим иметь возможность создавать в базе данных различные объекты (например, таблицы
                 и т. д.) и вставлять данные в эти таблицы. В Firebird любая операция с базой данных
@@ -267,10 +252,8 @@ tra->commit(&status);
             <para>Вы можете посмотреть, как начинать и подтверждать транзакцию в примерах
                     <filename>01.create.cpp</filename> и <filename>01.create.pas</filename>.</para>
         </section>
-
         <section xml:id="fbapi-dbaccess-execsql">
             <title>Выполнение оператора SQL без входных параметров и возвращаемых строк</title>
-
             <para>После старта транзакции мы готовы выполнять наши первые SQL операторы.
                 Используемый для этого метод <methodname>execute()</methodname> в <link
                     linkend="fbapi-interfaces-iattachment">IAttachment</link> является довольно
@@ -299,7 +282,6 @@ att->execute(&status, tra, 0, "insert into dates_table values (CURRENT_DATE)",
         </section>
         <section xml:id="fbapi-dbaccess-statement">
             <title>Выполнение SQL операторов с входными параметрами</title>
-
             <para>Существует два способа выполнения оператора с входными параметрами. Выбор
                 правильного метода зависит от того, нужно ли вам выполнять его более одного раза, и
                 знаете ли вы заранее формат параметров. Когда этот формат известен, и оператор нужно
@@ -307,7 +289,6 @@ att->execute(&status, tra, 0, "insert into dates_table values (CURRENT_DATE)",
                     <methodname>IAttachment::execute()</methodname>. В противном случае сначала
                 необходимо подготовить SQL-запрос, после чего его можно выполнять многократно с
                 различными параметрами.</para>
-
             <para>Чтобы подготовить SQL оператор для выполнения, используйте метод
                     <methodname>prepare()</methodname> интерфейса <link
                     linkend="fbapi-interfaces-iattachment">IAttachment</link>: <programlisting language="cpp">
@@ -323,7 +304,6 @@ IStatement* stmt = att->prepare(&status, tra, 0,
                     <code>IStatement::PREPARE_PREFETCH_NONE</code> вместо
                     <code>IStatement::PREPARE_PREFETCH_METADATA</code> — это немного снизит
                 клиет/серверный трафик и сохранит ресурсы.</para>
-
             <para>В ISC API используется структура XSQLDA для описания формата параметров оператора.
                 Новый API не использует XSQLDA — вместо этого используется интерфейс <link
                     linkend="fbapi-interfaces-imessagemetadata">IMessageMetadata</link>. Набор
@@ -365,7 +345,6 @@ IMetadataBuilder* builder = master->getMetadataBuilder(&status, 2);
             </para>
             <para>Второй параметр — это ожидамеое количество полей в сообщении, его можно изменить
                 позже, т.е. он необходим только для оптимизации.</para>
-
             <para>Теперь необходимо задать индивидуальные характеристики полей в построителе.
                 Минимально необходимыми являются типы полей и длина для строковых полей: <programlisting language="cpp">
 <![CDATA[
@@ -445,10 +424,8 @@ att->execute(&status, tra, 0,
                     <filename>02.update.cpp</filename>, вы также увидите, как возбужденное
                 исключение в триггере/процедуре может быть перехвачено в программе на C ++.</para>
         </section>
-
         <section xml:id="fbapi-dbaccess-cursor">
             <title>Открытие курсора и извлечение данных из него</title>
-
             <para>Единственный способ получить строки данных, возвращаемых оператором SELECT в OO
                 API — это использовать интерфейс <link linkend="fbapi-interfaces-iresultset"
                     >IResultSet</link>. Этот интерфейс возвращается методом
@@ -546,10 +523,8 @@ printf("field %s value is %*.*s\n",
                     <filename>03.select.cpp</filename> и
                 <filename>04.print_table.cpp</filename>.</para>
         </section>
-
         <section xml:id="fbapi-dbaccess-fbmessage">
             <title>Использование макросов FB_MESSAGE для статических сообщений</title>
-
             <para>Работа с данными с использованием смещений довольно эффективна, но требует
                 написания большого количества кода. В C ++ эту проблему можно решить с помощью
                 шаблонов, но даже по сравнению с ними наиболее удобным способом работы с сообщением
@@ -661,10 +636,8 @@ while (rs->fetchNext(&status, output.getData()) == IStatus::RESULT_OK)
             <para>Пример использования макроса FB_MESSAGE для работы с сообщениями приведен в
                 примере <filename>06.fb_message.cpp</filename>.</para>
         </section>
-
         <section xml:id="fbapi-dbaccess-blob">
             <title>Работа с BLOB</title>
-
             <para>Для BLOBs Firebird хранит в буфере сообщения идентификатор BLOB — 8 байтовый
                 объект, который должен быть выравнен по 4-байтной границе. Идентификатор имеет тип
                 ISC_QUAD. Интерфейс <link linkend="fbapi-interfaces-iattachment">IAttachment</link>
@@ -771,7 +744,6 @@ for(;;)
                 возвращает код завершения RESULT_SEGMENT, о чём будет уведомлена функция (в
                 последний параметр передан <literal>false</literal>), то есть этот сегмент прочитан
                 не полностью, и продолжение ожидается при следующем вызове.</para>
-
             <para>Закончив работать с BLOB, не забудьте закрыть его: <programlisting language="cpp">
                 <![CDATA[
 blob->close(&status);
@@ -779,10 +751,8 @@ blob->close(&status);
 </programlisting>
             </para>
         </section>
-
         <section xml:id="fbapi-dbaccess-events">
             <title>Работа с событиями</title>
-
             <para>Интерфейс событий не был завершен в Firebird 3.0, мы ожидаем, что в следующей
                 версии будет что-то более интересное. Минимальная существующая поддержка выглядит
                 следующим образом: <link linkend="fbapi-interfaces-iattachment">IAttachment</link>
@@ -817,10 +787,8 @@ events = attachment->queEvents(&status, this, eveLen, eveBuffer);
                 Для получения дополнительной информации используйте наш пример
                     <filename>08.events.cpp</filename>.</para>
         </section>
-
         <section xml:id="fbapi-dbaccess-services">
             <title>Использование сервисов</title>
-
             <para>Чтобы начать пользоваться сервисами (службами), прежде всего необходимо
                 подключиться к менеджеру сервисов. Это делается с помощью метода
                     <methodname>attachServiceManager()</methodname> интерфейса <link
@@ -942,10 +910,8 @@ svc->detach(&status);
             </para>
         </section>
     </section>
-
     <section xml:id="fbapi-plugins">
         <title>Написание плагинов</title>
-
         <para>Чтобы написать плагин, нужно реализовать некоторые интерфейсы и поместить вашу
             реализацию в динамическую библиотеку (<filename>.dll</filename> в Windows или
                 <filename>.so</filename> в Linux), которую называют модулем плагина или просто
@@ -964,10 +930,8 @@ svc->detach(&status);
         <para>Далее активно используется пример плагина шифрования базы данных
                 <filename>examples/dbcrypt/DbCrypt.cpp</filename>. Будет хорошей идеей собрать этот
             пример самостоятельно и изучить его при чтении позже.</para>
-
         <section xml:id="fbapi-plugins-module">
             <title>Реализация модуля плагина</title>
-
             <para>Плагины активно взаимодействуют со специальным компонентом Firebird, называемым
                 диспетчером плагинов. В частности, менеджер плагинов должен знать, какие модули
                 плагина были загружены и должен быть уведомлен, если операционная система пытается
@@ -986,7 +950,6 @@ svc->detach(&status);
                 использование деструктора позволяет легко сконцентрировать почти все, что связано с
                 обнаружением выгрузки в одном классе, реализуя в то же время интерфейс <link
                     linkend="fbapi-interfaces-ipluginmodule">IPluginModule</link>.</para>
-
             <para>Минимальная реализация выглядит следующим образом: <programlisting language="cpp">
                 <![CDATA[
 class PluginModule : public IPluginModuleImpl<PluginModule, CheckStatusWrapper>
@@ -1025,7 +988,6 @@ public:
 ]]>
 </programlisting>
             </para>
-
             <para>Единственным членом данных является интерфейс диспетчера плагинов <link
                     linkend="fbapi-interfaces-ipluginmanager">IPluginManager</link>. Он передается
                 функции <methodname>registerModule()</methodname> и сохраняется в приватной
@@ -1041,7 +1003,6 @@ public:
                 незарегистрированное, и это позволяет избежать вызова
                     <methodname>unregisterModule()</methodname>, когда ОС выполняет фактическую
                 выгрузку.</para>
-
             <para>Реализовав интерфейс плагина <interfacename>IPluginModule</interfacename>, мы
                 встретились с первым интерфейсом, необходимым для реализации плагинов —
                     <interfacename>IPluginManager</interfacename>. Он будет активно использоваться
@@ -1049,10 +1010,8 @@ public:
                 программу. Просто не забудьте объявить глобальную переменную этого типа и вызвать
                 функцию <methodname>registerMe()</methodname> из FB_PLUGIN_ENTRY_POINT.</para>
         </section>
-
         <section xml:id="fbapi-plugins-pluginbase">
             <title>Основной интерфейс любого плагина</title>
-
             <para>Приступим к реализации самого плагина. Тип основного интерфейса зависит от типа
                 плагина (что очевидно), но все они основаны на общем интерфейсе
                     <interfacename>IPluginBase</interfacename> с подсчётом ссылок, который выполняет
@@ -1147,10 +1106,8 @@ private:
                 После добавления специфичных для типа методов (и, возможно, написания кода, чтобы
                 сделать их полезным), интерфейс готов.</para>
         </section>
-
         <section xml:id="fbapi-plugins-factory">
             <title>Фабрика плагинов</title>
-
             <para>Еще один интерфейс, необходимый для работы плагина — <link
                     linkend="fbapi-interfaces-ipluginfactory">IPluginFactory</link>. Фабрика создает
                 экземпляры плагина и возвращает их в диспетчер плагинов. Фабрика обычно выглядит
@@ -1182,10 +1139,8 @@ public:
                 обрабатывать любой тип исключения C++ и передавать полезную информацию об этом из
                 своего плагина.</para>
         </section>
-
         <section xml:id="fbapi-plugins-entrypoint">
             <title>Точка инициализации модуля плагина</title>
-
             <para>Когда диспетчер плагинов загружает модуль плагина, он вызывает процедуру
                 инициализации модуля — единственную экспортируемую функцию плагина
                 FB_PLUGIN_ENTRY_POINT. Для написания кода ей понадобятся две глобальные переменные —
@@ -1235,20 +1190,16 @@ extern "C" void FB_DLL_EXPORT FB_PLUGIN_ENTRY_POINT(IMaster* master)
                 вашем плагине, позаботьтесь об его сохранении в этой функции.</para>
         </section>
     </section>
-
     <section xml:id="fbapi-interfaces">
         <title>Интерфейсы от A до Z</title>
-
         <para>В этом глоссарии мы не перечисляем интерфейсы, которые не используются активно
             (например, <interfacename>IRequest</interfacename>, необходимые в первую очередь для
             поддержки устаревших запросов API ISC). Та же ссылка может быть получена из некоторых
             методов (например, <methodname>compileRequest()</methodname> в
                 <interfacename>IAttachment</interfacename>). Для интерфейсов/методов, имеющих прямой
             аналог в старом API, этот аналог будет указан.</para>
-
         <section xml:id="fbapi-interfaces-common">
             <title>Общие интерфейсы</title>
-
             <section xml:id="fbapi-interfaces-iattachment">
                 <info>
                     <title>IAttachment</title>
@@ -1256,16 +1207,16 @@ extern "C" void FB_DLL_EXPORT FB_PLUGIN_ENTRY_POINT(IMaster* master)
                         <keyword>IAttachment</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IAttachment</primary></indexterm>
-
+                <indexterm>
+                    <primary>IAttachment</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IAttachment</interfacename> заменяет
                             <code>isc_db_handle</code>.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -1506,7 +1457,6 @@ void dropDatabase(StatusType* status)
                     </orderedlist>
                 </para>
             </section>
-
             <section xml:id="fbapi-interfaces-iblob">
                 <info>
                     <title>IBlob</title>
@@ -1514,16 +1464,16 @@ void dropDatabase(StatusType* status)
                         <keyword>IBlob</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IBlob</primary></indexterm>
-
+                <indexterm>
+                    <primary>IBlob</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IBlob</interfacename> заменяет
                             <code>isc_blob_handle</code>.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -1601,16 +1551,16 @@ int seek(StatusType* status,
                         <keyword>IConfig</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IConfig</primary></indexterm>
-
+                <indexterm>
+                    <primary>IConfig</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IConfig</interfacename> — общий интерфейс файла
                         конфигурации.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -1652,16 +1602,16 @@ Db=DBC
                         <keyword>IConfigManager</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IConfigManager</primary></indexterm>
-
+                <indexterm>
+                    <primary>IConfigManager</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IConfigManager</interfacename> — общий интерфейс
                         для доступа к различным объектам конфигурации.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -1760,11 +1710,11 @@ const char* getRootDirectory()
                             <para>DIR_HELP — qli help (<filename>help.fdb</filename>);</para>
                         </listitem>
                         <listitem>
-                            <para>DIR_INTL — каталог библиотек интернационализаци
+                            <para>DIR_INTL — каталог библиотек интернационализации
                                     (<filename>fbintl</filename>);</para>
                         </listitem>
                         <listitem>
-                            <para>DIR_MISC — различные файлы (как манифест деинсталлятор и
+                            <para>DIR_MISC — различные файлы (как манифест деинсталлятора и
                                 другое);</para>
                         </listitem>
                         <listitem>
@@ -1795,17 +1745,17 @@ const char* getRootDirectory()
                         <keyword>IConfigEntry</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IConfigEntry</primary></indexterm>
-
+                <indexterm>
+                    <primary>IConfigEntry</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IConfigEntry</interfacename> — представляет
                         запись (Key = Values с возможными подзаголовками (подзаписями)) в файле
                         конфигурации firebird.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -1857,20 +1807,21 @@ IConfig* getSubConfig(StatusType* status)
                         <keyword>IDtc</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IDtc</primary></indexterm>
-
+                <indexterm>
+                    <primary>IDtc</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IDtc</interfacename> — координатор распределенных
                         транзакций. Используется для запуска распределенной (работает с двумя или
                         более подключениями) транзакции. В отличие от пред-FB3-подхода, когда
                         распределенная транзакция должна запускаться таким образом с самого начала,
-                        координатор распределенных транзакций FB3 позволяет также присоединить уже
-                        запущенные транзакции в единую распределенную транзакцию.</para>
+                        координатор распределенных транзакций Firebird 3 позволяет также
+                        присоединить уже запущенные транзакции в единую распределенную
+                        транзакцию.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -1901,18 +1852,18 @@ IDtcStart* startBuilder(StatusType* status)
                         <keyword>IDtcStart</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IDtcStart</primary></indexterm>
-
+                <indexterm>
+                    <primary>IDtcStart</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IDtcStart</interfacename> — заменяет массив
                         структур TEB (передан <code>isc_start_multiple()</code> в ISC API). Этот
                         интерфейс собирает подключения (и, вероятно, соответствующие TPB), для
                         которых должна быть запущена распределённая транзакция.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -1951,18 +1902,18 @@ ITransaction* start(StatusType* status)
                         <keyword>IEventCallback</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IEventCallback</primary></indexterm>
-
+                <indexterm>
+                    <primary>IEventCallback</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IEventCallback</interfacename> — заменяет функцию
                         обратного вызова, используемую в вызове <code>isc_que_events()</code>.
                         Должен быть реализован пользователем для отслеживания событий с помощью
                         метода <code>IAttachment::queEvents()</code>.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -1981,16 +1932,16 @@ void eventCallbackFunction(unsigned length, const unsigned char* events)
                         <keyword>IEvents</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IEvents</primary></indexterm>
-
+                <indexterm>
+                    <primary>IEvents</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IEvents</interfacename> — заменяет идентификатор
                         события при работе с мониторингом событий.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2010,13 +1961,13 @@ void cancel(StatusType* status)
                         <keyword>IFirebirdConf</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IFirebirdConf</primary></indexterm>
-
+                <indexterm>
+                    <primary>IFirebirdConf</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IFirebirdConf</interfacename> — доступ к основной
-                        конфигурации firebird. Используется как для конфигурации по умолчанию,
+                        конфигурации Firebird. Используется как для конфигурации по умолчанию,
                         заданной конфигурацией <filename>firebird.conf</filename>, так и для каждой
                         базы данных, скорректированной с помощью <filename>database.conf</filename>.
                         Чтобы ускорить доступ к значениям конфигурации, вызовы, обращающиеся к
@@ -2025,8 +1976,8 @@ void cancel(StatusType* status)
                         получить его один раз и использовать для получения значения параметров
                         конфигурации для разных баз данных).</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2072,16 +2023,16 @@ FB_BOOLEAN asBoolean(unsigned key)
                         <keyword>IMaster</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IMaster</primary></indexterm>
-
+                <indexterm>
+                    <primary>IMaster</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para><interfacename>IMaster</interfacename> — основной интерфейс, с которого
                         начинаются все операции с API-интерфейсом Firebird.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2158,18 +2109,18 @@ IConfigManager* getConfigManager()
                         <keyword>IMessageMetadata</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IMessageMetadata</primary></indexterm>
-
+                <indexterm>
+                    <primary>IMessageMetadata</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>MessageMetadata</interfacename> — частичный
                         аналог XSQLDA (не содержит данных сообщений, присутствует только информация
                         о формате сообщения). Используется в вызовах, связанных с выполнением
                         операторов SQL.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2218,7 +2169,7 @@ const char* getAlias(StatusType* status, unsigned index)
 <![CDATA[
 unsigned getType(StatusType* status, unsigned index) 
 ]]>
-</programlisting> вовзаращет SQL тип поля. </para>
+</programlisting> вовзращает SQL тип поля. </para>
                         </listitem>
                         <listitem>
                             <para/>
@@ -2306,17 +2257,17 @@ unsigned getMessageLength(StatusType* status)
                         <keyword>IMetadataBuilder</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IMetadataBuilder</primary></indexterm>
-
+                <indexterm>
+                    <primary>IMetadataBuilder</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IMetadataBuilder</interfacename> — позволяет
                         описать типы данных для существующих сообщений или создавать метаданные с
                         самого начала.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2339,7 +2290,7 @@ void setSubType(StatusType* status, unsigned index, int subType)
 <![CDATA[
 void setLength(StatusType* status, unsigned index, unsigned length)
 ]]>
-</programlisting> установливает максимальную длину символьного поля. </para>
+</programlisting> устанавливает максимальную длину символьного поля. </para>
                         </listitem>
                         <listitem>
                             <para/>
@@ -2410,15 +2361,15 @@ IMessageMetadata* getMetadata(StatusType* status)
                         <keyword>IOffsetsCallback</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IOffsetsCallback</primary></indexterm>
-
+                <indexterm>
+                    <primary>IOffsetsCallback</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс IOffsetsCallback</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2442,17 +2393,17 @@ void setOffset(StatusType* status, unsigned index, unsigned offset, unsigned nul
                         <keyword>IPluginConfig</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IPluginConfig</primary></indexterm>
-
+                <indexterm>
+                    <primary>IPluginConfig</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IPluginConfig</interfacename> — передается
                         фабрике плагинов при создании экземпляра плагина (с конкретной
                         конфигурацией).</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2499,16 +2450,16 @@ void setReleaseDelay(StatusType* status, ISC_UINT64 microSeconds)
                         <keyword>IPluginFactory</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IPluginFactory</primary></indexterm>
-
+                <indexterm>
+                    <primary>IPluginFactory</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IPluginFactory</interfacename> — должен быть
                         реализован автором плагина при написании плагина.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2521,7 +2472,6 @@ IPluginBase* createPlugin(StatusType* status, IPluginConfig* factoryParameter)
                     </orderedlist>
                 </para>
             </section>
-
             <section xml:id="fbapi-interfaces-ipluginmanager">
                 <info>
                     <title>IPluginManager</title>
@@ -2529,16 +2479,16 @@ IPluginBase* createPlugin(StatusType* status, IPluginConfig* factoryParameter)
                         <keyword>IPluginManager</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IPluginManager</primary></indexterm>
-
+                <indexterm>
+                    <primary>IPluginManager</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IPluginManager</interfacename> — API диспетчера
                         плагинов.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2647,17 +2597,17 @@ void releasePlugin(IPluginBase* plugin)
                         <keyword>IPluginModule</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IPluginModule</primary></indexterm>
-
+                <indexterm>
+                    <primary>IPluginModule</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IPluginModule</interfacename> — представляет
                         модуль плагина (динамическая библиотека). Должен быть реализован автором
                         плагина в каждом модуле плагина (по одному экземпляру на модуль).</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2677,25 +2627,25 @@ void doClean()
                         <keyword>IPluginSet</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IPluginSet</primary></indexterm>
-
+                <indexterm>
+                    <primary>IPluginSet</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IPluginSet</interfacename> — представляет собой
                         набор плагинов данного типа. Обычно используется внутренним кодом Firebird,
                         но рекомендуется для использования в плагинах, загружающих другие
                         плагины.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
 <![CDATA[
 const char* getName() 
 ]]>
-</programlisting> возврщает имя текущего плагина в наборе. </para>
+</programlisting> возвращает имя текущего плагина в наборе. </para>
                         </listitem>
                         <listitem>
                             <para/>
@@ -2703,7 +2653,7 @@ const char* getName()
 <![CDATA[
 const char* getModuleName()
 ]]>
-</programlisting> возврщает имя модуля текущего плагина в наборе (в простом случае совпадает с
+</programlisting> возвращает имя модуля текущего плагина в наборе (в простом случае совпадает с
                                 именем плагина). </para>
                         </listitem>
                         <listitem>
@@ -2720,7 +2670,7 @@ IPluginBase* getPlugin(StatusType* status)
                                 не забудьте использовать метод
                                     <methodname>releasePlugin()</methodname> интерфейса <link
                                     linkend="fbapi-interfaces-ipluginmanager">IPluginManager</link>
-                                для плагинов, возвращаемых этим методом. </para>
+                                для освобождения плагинов, возвращаемых этим методом. </para>
                         </listitem>
                         <listitem>
                             <para/>
@@ -2737,7 +2687,7 @@ void next(StatusType* status)
 <![CDATA[
 void set(StatusType* status, const char* list) 
 ]]>
-</programlisting> сбрасывает интерфейс: заставить его работать со списком плагинов,
+</programlisting> сбрасывает интерфейс: заставляет его работать со списком плагинов,
                                 предоставляемых параметром списка. Тип плагинов остается неизменным.
                             </para>
                         </listitem>
@@ -2751,16 +2701,16 @@ void set(StatusType* status, const char* list)
                         <keyword>IProvider</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IProvider</primary></indexterm>
-
+                <indexterm>
+                    <primary>IProvider</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IPluginModule</interfacename> — основной
                         интерфейс для начала доступа к базе данных/сервису.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2822,11 +2772,11 @@ void setDbCryptCallback(IStatus* status, ICryptKeyCallback* cryptCallback)
                         <keyword>IResultSet</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IResultSet</primary></indexterm>
-
+                <indexterm>
+                    <primary>IResultSet</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IResultSet</interfacename> — заменяет (с
                         расширенной функциональностью) некоторые функции
                             <code>isc_stmt_handle</code>. Этот интерфейс возвращается вызовом
@@ -2837,8 +2787,8 @@ void setDbCryptCallback(IStatus* status, ICryptKeyCallback* cryptCallback)
                         работают только для двунаправленного (открытого с флагом
                             <code>CURSOR_TYPE_SCROLLABLE</code>) курсора.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2936,16 +2886,16 @@ void close(IStatus* status)
                         <keyword>IService</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IService</primary></indexterm>
-
+                <indexterm>
+                    <primary>IService</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IService</interfacename> — заменяет
                             <code>isc_svc_handle</code>.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -2993,16 +2943,16 @@ void start(StatusType* status,
                         <keyword>IStatement</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IStatement</primary></indexterm>
-
+                <indexterm>
+                    <primary>IStatement</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IStatement</interfacename> — заменяет (частично)
                             <code>isc_stmt_handle</code>.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -3119,7 +3069,6 @@ unsigned getFlags(StatusType* status)
                 </para>
                 <section>
                     <title>Константы, определенные интерфейсом IStatement</title>
-
                     <para>Флаги <methodname>IAttachment::prepare()</methodname>: <itemizedlist
                             spacing="compact">
                             <listitem>
@@ -3127,7 +3076,7 @@ unsigned getFlags(StatusType* status)
                                     пропускать флаги, значение 0.</para>
                             </listitem>
                         </itemizedlist> Следующие флаги могут быть объеденены с помощью
-                            <code>OR</code> для полчение желаемого эффекта: <orderedlist
+                            <code>OR</code> для полчения желаемого эффекта: <orderedlist
                             spacing="compact">
                             <listitem>
                                 <para><code>PREPARE_PREFETCH_TYPE</code></para>
@@ -3187,11 +3136,11 @@ unsigned getFlags(StatusType* status)
                         <keyword>IStatus</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IStatus</primary></indexterm>
-
+                <indexterm>
+                    <primary>IStatus</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IStatus</interfacename> — заменяет
                             <code>ISC_STATUS_ARRAY</code>. Функциональность расширена — статус имеет
                         отдельный доступ к векторам ошибок и предупреждений, может содержать векторы
@@ -3204,8 +3153,8 @@ unsigned getFlags(StatusType* status)
                         интерфейс <link linkend="fbapi-interfaces-iutil">IUtil</link>), чтобы
                         упростить его реализацию пользователями при необходимости.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -3287,9 +3236,7 @@ IStatus* clone()
                 </para>
                 <section>
                     <title>Константы определённые в IStatus</title>
-
-                    <para>Флаги, установленные в значение, возвращаемые методом
-                            <methodname>getState()</methodname>:<itemizedlist>
+                    <para>Флаги, возвращаемые методом <methodname>getState()</methodname>:<itemizedlist>
                             <listitem>
                                 <para><code>STATE_WARNINGS</code></para>
                             </listitem>
@@ -3297,7 +3244,6 @@ IStatus* clone()
                                 <para><code>STATE_ERRORS</code></para>
                             </listitem>
                         </itemizedlist></para>
-
                     <para>Коды завершения: <itemizedlist>
                             <listitem>
                                 <para><code>RESULT_ERROR</code></para>
@@ -3321,17 +3267,17 @@ IStatus* clone()
                         <keyword>ITimer</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>ITimer</primary></indexterm>
-
+                <indexterm>
+                    <primary>ITimer</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>ITimer</interfacename> — пользовательский таймер.
                         Интерфейс обратного вызова, который должен быть реализован пользователем для
                         использования таймера Firebird.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -3350,11 +3296,11 @@ void handler()
                         <keyword>ITimerControl</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>ITimerControl</primary></indexterm>
-
+                <indexterm>
+                    <primary>ITimerControl</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>ITimerControl</interfacename> — очень простая и
                         не слишком точная реализация таймера. Прибыл сюда, потому что существующие
                         таймеры очень зависимы от ОС и могут использоваться в программах, которые
@@ -3363,8 +3309,8 @@ void handler()
                         был завершен в тот момент, когда данный таймер должен
                         сигнализировать.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -3396,16 +3342,16 @@ void stop(StatusType* status, ITimer* timer)
                         <keyword>ITransaction</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>ITransaction</primary></indexterm>
-
+                <indexterm>
+                    <primary>ITransaction</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>ITransaction</interfacename> — заменяет
                             <code>isc_tr_handle</code>.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -3476,7 +3422,7 @@ ITransaction* join(StatusType* status, ITransaction* transaction)
 ]]>
 </programlisting> соединяет текущую транзакцию и транзакцию переданную как параметр в единую
                                 распределённую транзакцию (с импользованием Dtc). При успешном
-                                выполнении текущая транзакция и тразакция переданная в качестве
+                                выполнении текущая транзакция и транзакция переданная в качестве
                                 параметра освобождаются и больше не должны использоваться.</para>
                         </listitem>
                         <listitem>
@@ -3507,16 +3453,16 @@ ITransaction* enterDtc(StatusType* status)
                         <keyword>IVersionCallback</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IVersionCallback</primary></indexterm>
-
+                <indexterm>
+                    <primary>IVersionCallback</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IVersionCallback</interfacename> — обратный вызов
                         для <methodname>IUtil::getFbVersion()</methodname>.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -3537,16 +3483,16 @@ void callback(StatusType* status, const char* text)
                         <keyword>IUtil</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IUtil</primary></indexterm>
-
+                <indexterm>
+                    <primary>IUtil</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IUtil</interfacename> — различные вспомогательные
                         методы, требуемые здесь или там.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -3706,15 +3652,15 @@ unsigned setOffsets(StatusType* status,
                         <keyword>IXpbBuilder</keyword>
                     </keywordset>
                 </info>
-                <indexterm><primary>IXpbBuilder</primary></indexterm>
-
+                <indexterm>
+                    <primary>IXpbBuilder</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IXpbBuilder</interfacename></para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -3875,7 +3821,6 @@ const unsigned char* getBuffer(StatusType* status)
                 </para>
                 <section>
                     <title>Константы, определенные интерфейсом IXpbBuilder</title>
-
                     <para>Допустимые типы построителей: <itemizedlist spacing="compact">
                             <listitem>
                                 <para><code>DPB</code></para>
@@ -3895,7 +3840,6 @@ const unsigned char* getBuffer(StatusType* status)
         </section>
         <section>
             <title>Плагин шифрования данных передаваемых по сети</title>
-
             <para>Алгоритмы, выполняющие шифрование данных для разных целей, хорошо известны на
                 протяжении многих лет. Единственной "маленькой" типичной проблемой остается то, где
                 можно получить секретный ключ, который будет использоваться этим алгоритмом. К
@@ -3908,7 +3852,6 @@ const unsigned char* getBuffer(StatusType* status)
                 используемый плагин аутентификации не может предоставить ключ, псевдоплагин может
                 быть добавлен в списки AuthClient и AuthServer для создания ключей, что-то вроде
                 двух асимметричных пар приватного и публичного.)</para>
-
             <section xml:id="fbapi-interfaces-icryptkey">
                 <info>
                     <title>ICryptKey</title>
@@ -3916,12 +3859,11 @@ const unsigned char* getBuffer(StatusType* status)
                         <keyword>ICryptKey</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>ICryptKey</primary></indexterm>
-
+                <indexterm>
+                    <primary>ICryptKey</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>ICryptKey</interfacename> используется для
                         хранения ключа, предоставленного плагином аутентификации, и передает его в
                         плагин шифрования сетевого трафика. Этот интерфейс следует использовать
@@ -3934,8 +3876,8 @@ const unsigned char* getBuffer(StatusType* status)
                             >IWireCryptPlugin</link> тип ключа будет выбран Firebird и передан этому
                         интерфейсу.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -3981,7 +3923,6 @@ const void* getDecryptKey(unsigned* length))
                     </orderedlist>
                 </para>
             </section>
-
             <section xml:id="fbapi-interfaces-iwirecryptplugin">
                 <info>
                     <title>IWireCryptPlugin</title>
@@ -3989,18 +3930,17 @@ const void* getDecryptKey(unsigned* length))
                         <keyword>IWireCryptPlugin</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IWireCryptPlugin</primary></indexterm>
-
+                <indexterm>
+                    <primary>IWireCryptPlugin</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IWireCryptPlugin</interfacename> является
                         основным интерфейсом плагина сетевого шифрования. Как и любой другой такой
                         интерфейс, он должен быть реализован автором плагина.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -4046,8 +3986,7 @@ void decrypt(StatusType* status,
         </section>
         <section>
             <title>Плагин аутентификации на серверной стороне</title>
-
-            <para>Плагин аутентификации содержит две требуемые части — клиентскую и серверверную, а
+            <para>Плагин аутентификации содержит две требуемые части — клиентскую и серверную, а
                 также может содержать связанную с ним третью часть — менеджер пользователей. В
                 процессе аутентификации клиент Firebird вызывает клиентский плагин и отправляет
                 сгенерированные им данные на сервер, затем сервер вызывает серверный плагин и
@@ -4058,7 +3997,6 @@ void decrypt(StatusType* status,
                 итеративного процесса и отказ, сообщаемый клиенту, <code>AUTH_CONTINUE</code>
                 означает, что должен быть проверен следующий плагин из списка настроенных плагинов
                 проверки подлинности.</para>
-
             <para>Нет выделенных примеров плагинов для аутентификации, но в исходных кодах firebird
                 в каталоге <filename>src/auth</filename> можно найти плагин <emphasis role="italic"
                     >AuthDbg</emphasis>, с помощью которого можно учиться на тривиальном примере
@@ -4066,7 +4004,6 @@ void decrypt(StatusType* status,
                 без вызовов сумасшедших функций WinAPI, таких как в <emphasis role="italic"
                     >AuthSspi</emphasis>), как клиентская и серверная сторона выполняют
                 аутентификацию (рукопожатие).</para>
-
             <section xml:id="fbapi-interfaces-iauth">
                 <info>
                     <title>IAuth</title>
@@ -4074,19 +4011,17 @@ void decrypt(StatusType* status,
                         <keyword>IAuth</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IAuth</primary></indexterm>
-
+                <indexterm>
+                    <primary>IAuth</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IAuth</interfacename> не содержит методов, только
                         некоторые константы, определяющие коды, возвращаются из метода
                             <methodname>authenticate()</methodname> в <link
                             linkend="fbapi-interfaces-iclient">IClient</link> и <link
                             linkend="fbapi-interfaces-iserver">IServer</link>.</para>
                 </formalpara>
-
                 <para>
                     <itemizedlist spacing="compact">
                         <listitem>
@@ -4104,7 +4039,6 @@ void decrypt(StatusType* status,
                     </itemizedlist>
                 </para>
             </section>
-
             <section xml:id="fbapi-interfaces-iwriter">
                 <info>
                     <title>IWriter</title>
@@ -4112,16 +4046,14 @@ void decrypt(StatusType* status,
                         <keyword>IWriter</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IWriter</primary></indexterm>
-
+                <indexterm>
+                    <primary>IWriter</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IWriter</interfacename> — записывает блок
                         параметров аутентификации.</para>
                 </formalpara>
-
                 <para>
                     <orderedlist>
                         <listitem>
@@ -4163,14 +4095,11 @@ void setDb(StatusType* status, const char* value)
             </section>
             <section xml:id="fbapi-interfaces-iserverblock">
                 <title>IServerBlock</title>
-
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IServerBlock</interfacename> используется
                         серверной частью модуля аутентификации для обмена данными с клиентом.</para>
                 </formalpara>
-
                 <para>
                     <orderedlist>
                         <listitem>
@@ -4206,7 +4135,8 @@ ICryptKey* newKey(StatusType* status)
 </programlisting> создаёт новый ключ шифрования и добавляет его в список доступных для плагинов
                                 шифрования сетевого трафика. </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
             <section xml:id="fbapi-interfaces-iserver">
                 <info>
@@ -4215,16 +4145,14 @@ ICryptKey* newKey(StatusType* status)
                         <keyword>IServer</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IServer</primary></indexterm>
-
+                <indexterm>
+                    <primary>IServer</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IServer</interfacename> является основным
                         интерфейсом серверной части плагина аутентификации.</para>
                 </formalpara>
-
                 <para>
                     <orderedlist>
                         <listitem>
@@ -4243,12 +4171,12 @@ int authenticate(StatusType* status,
                                 возврата определяются в интерфейсе <link
                                     linkend="fbapi-interfaces-iauth">IAuth</link>. </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
         </section>
         <section>
             <title>Плагин аутентификации на клиентской стороне</title>
-
             <section xml:id="fbapi-interfaces-iclientblock">
                 <info>
                     <title>IClientBlock</title>
@@ -4256,17 +4184,15 @@ int authenticate(StatusType* status,
                         <keyword>IClientBlock</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IClientBlock</primary></indexterm>
-
+                <indexterm>
+                    <primary>IClientBlock</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IClientBlock</interfacename> используется
                         клиентской стороной модуля аутентификации для обмена данными с
                         сервером.</para>
                 </formalpara>
-
                 <para>
                     <orderedlist>
                         <listitem>
@@ -4310,7 +4236,8 @@ ICryptKey* newKey(StatusType* status)
 </programlisting> создаёт новый ключ шифрования и добавляет его в список доступных для плагинов
                                 шифрования сетевого трафика. </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
             <section xml:id="fbapi-interfaces-iclient">
                 <info>
@@ -4319,17 +4246,16 @@ ICryptKey* newKey(StatusType* status)
                         <keyword>IClient</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IClient</primary></indexterm>
-
+                <indexterm>
+                    <primary>IClient</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IClient</interfacename> является основным
                         интерфейсом клиентской стороны модуля аутентификации. </para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -4345,12 +4271,12 @@ int authenticate(StatusType* status,
                                 (т.е. клиент отправляет сгенерированные данные на сервер и ждет
                                 ответа от него). </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
         </section>
         <section>
             <title>Плагин управления пользователями</title>
-
             <para>Этот плагин активно связан с серверной частью проверки подлинности — он
                 подготавливает список пользователей для плагина аутентификации. Для каждого плагина
                 проверки подлинности требуется менеджер пользователей — некоторые из них могут
@@ -4361,7 +4287,6 @@ int authenticate(StatusType* status,
                 пользователя, получение списка пользователей и т. д. Плагин должен уметь
                 интерпретировать команды, полученные в интерфейсе <link
                     linkend="fbapi-interfaces-iuser">IUser</link>.</para>
-
             <section xml:id="fbapi-interfaces-iuserfield">
                 <info>
                     <title>IUserField</title>
@@ -4369,19 +4294,18 @@ int authenticate(StatusType* status,
                         <keyword>IUserField</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IUserField</primary></indexterm>
-
+                <indexterm>
+                    <primary>IUserField</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IUserField</interfacename> не используется как
                         автономный интерфейс, он является базовым для
                             <interfacename>ICharUserField</interfacename> и
                             <interfacename>IIntUserField</interfacename>. </para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -4412,7 +4336,8 @@ void setEntered(StatusType* status, int newValue)
                                 следовательно, имеют полный доступ к их внутренним элементам.
                             </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
             <section xml:id="fbapi-interfaces-icharuserfield">
                 <info>
@@ -4421,9 +4346,9 @@ void setEntered(StatusType* status, int newValue)
                         <keyword>ICharUserField</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>ICharUserField</primary></indexterm>
-
+                <indexterm>
+                    <primary>ICharUserField</primary>
+                </indexterm>
                 <para>Интерфейс <interfacename>ICharUserField</interfacename>: <orderedlist>
                         <listitem>
                             <para/>
@@ -4450,9 +4375,9 @@ void set(StatusType* status, const char* newValue)
                         <keyword>IIntUserField</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IIntUserField</primary></indexterm>
-
+                <indexterm>
+                    <primary>IIntUserField</primary>
+                </indexterm>
                 <para>Интрефейс <interfacename>IIntUserField</interfacename>: <orderedlist>
                         <listitem>
                             <para/>
@@ -4479,17 +4404,16 @@ void set(StatusType* status, int newValue)
                         <keyword>IUser</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IUser</primary></indexterm>
-
+                <indexterm>
+                    <primary>IUser</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IUser</interfacename> — это список методов
                         доступа к полям, включенным в запись о пользователе.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -4524,7 +4448,8 @@ ICharUserField* firstName()
                         </listitem>
                         <listitem>
                             <para/>
-                            <para><programlisting language="cpp">
+                            <para>
+                                <programlisting language="cpp">
 <![CDATA[
 ICharUserField* lastName()
 ]]>
@@ -4533,7 +4458,8 @@ ICharUserField* lastName()
                         </listitem>
                         <listitem>
                             <para/>
-                            <para><programlisting language="cpp">
+                            <para>
+                                <programlisting language="cpp">
 <![CDATA[
 ICharUserField* middleName()
 ]]>
@@ -4581,7 +4507,8 @@ void clear(StatusType* status)
 ]]>
 </programlisting> устанавливает, что все поля не введены и не указаны. </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
                 <para>Константы, определенные пользовательским интерфейсом — действующие коды
                     операций. <itemizedlist>
                         <listitem>
@@ -4613,12 +4540,11 @@ void clear(StatusType* status)
                         <keyword>IListUsers</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IListUsers</primary></indexterm>
-
+                <indexterm>
+                    <primary>IListUsers</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IListUsers</interfacename> — это обратный вызов,
                         используемый плагином проверки подлинности при запросе списка пользователей.
                         Плагин заполняет интерфейс <link linkend="fbapi-interfaces-iuser"
@@ -4626,20 +4552,21 @@ void clear(StatusType* status)
                         для каждого пользователя вызывает метод <methodname>list()</methodname>
                         этого интерфейса.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
 <![CDATA[
 void list(StatusType* status, IUser* user)
 ]]>
-</programlisting> функция обратного вызова. Реализация может делать полученными данными то что
+</programlisting> функция обратного вызова. Реализация может делать с полученными данными то что
                                 хочет. Например, она может поместить данные из пользовательского
                                 параметра в выходной поток сервиса или разместить в специальных
                                 таблицах SEC$ группы. </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
             <section xml:id="fbapi-interfaces-ilogoninfo">
                 <info>
@@ -4648,18 +4575,17 @@ void list(StatusType* status, IUser* user)
                         <keyword>ILogonInfo</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>ILogonInfo</primary></indexterm>
-
+                <indexterm>
+                    <primary>ILogonInfo</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>ILogonInfo</interfacename> содержит данные,
-                        переданные плагину управления пользователями лдя подключения к базе данных
+                        переданные плагину управления пользователями для подключения к базе данных
                         безопасности с действительными учётыми данныим.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -4703,7 +4629,8 @@ const unsigned char* authBlock(unsigned* length)
 </programlisting> возвращает блок аутентификации текущего подключения. Если не NULL переписывает
                                 имя пользователя. </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
             <section xml:id="fbapi-interfaces-imanagement">
                 <info>
@@ -4712,17 +4639,16 @@ const unsigned char* authBlock(unsigned* length)
                         <keyword>IManagement</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>ILogonInfo</primary></indexterm>
-
+                <indexterm>
+                    <primary>ILogonInfo</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IManagement</interfacename> является основным
                         интерфейсом плагина управления пользователями.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -4765,42 +4691,41 @@ void rollback(StatusType* status)
 </programlisting> отменяет изменения, выполненные вызовами метода
                                     <methodname>execute()</methodname>. </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
         </section>
         <section>
             <title>Плагин шифрования базы данных</title>
-
             <para>Возможность шифрования базы данных присутствовала в Firebird со времён Interbase,
                 но соответствующие места в коде были закомментированы. Реализация была сомнительной
                 — ключ шифрования всегда отправлялся от клиента в DPB, не было сделано попыток
                 скрыть его от внешнего мира, и не предлагалось путей для шифрования существующих баз
                 данных. Firebird 3.0 решает большинство проблем, за исключением, вероятно, худшей —
                 как управлять ключами шифрования. Мы предлагаем различные типы решений, но они
-                требует усилий в плагинах, т. е. нет красивого способа работы с ключами, например,
-                для плагинов шифрования сетевого трафика.</para>
+                требует усилий в плагинах, т. е. нет красивого способа работы с ключами как,
+                например, для плагинов шифрования сетевого трафика.</para>
             <para>Перед запуском с собственным плагином шифрования базы данных следует принять во
-                внимание следующее. Мы видим два основных случая для которых использользуется
-                шифрование базы данных — во-первых, может потребоваться избежать утечки данных, если
-                сервер базы данных физически украден, а во-вторых, оно может использоваться для
-                защиты данных в базе данных, которые распространяется вместе со специальным
-                приложением, обращающимся к этим данным. Требования к этим случаям совершенно
-                разные. В первом случае мы можем доверять серверу базы данных, что он не
-                модифицирован, чтобы красть ключи, переданные в плагин безопасности, то есть мы
-                ожидаем, что этот ключ не будет отправлен на неподходящий сервер. Во втором случае
-                сервер может быть каким-то образом модифицирован для кражи ключей (если они
-                передаются из приложения в плагин через код сервера) или даже данных (в качестве
-                последнего места для снятия дампов из кеша, где они находятся в незашифрованном
-                виде). Поэтому ваш плагин должен убедиться, что он работает с не измененными
-                двоичными файлами Firebird и вашим приложением перед отправкой ключа в плагин,
-                например, плагин может потребоваться от них какой-то цифровой подписи.Кроме того,
-                если используется сетевой доступ к серверу, то хорошей идеей является проверка того,
-                что сетевой канал зашифрован (разбор вывода IUtil::getFbVersion()) или используется
-                собственный ключ шифрования. Вся эта работа должна выполняться в плагине (и в
-                приложении, работающим с ним), то есть алгоритм шифрования блока базы данных сам по
-                себе может оказаться наиболее простой частью плагина шифрования базы данных,
-                особенно когда для него используется некоторая стандартная библиотека.</para>
-
+                внимание следующее. Мы видим два основных случая для которых используется шифрование
+                базы данных — во-первых, может потребоваться избежать утечки данных, если сервер
+                базы данных физически украден, а во-вторых, оно может использоваться для защиты
+                данных в базе данных, которые распространяется вместе со специальным приложением,
+                обращающимся к этим данным. Требования к этим случаям совершенно разные. В первом
+                случае мы можем доверять серверу базы данных, что он не модифицирован, чтобы красть
+                ключи, переданные в плагин безопасности, то есть мы ожидаем, что этот ключ не будет
+                отправлен на неподходящий сервер. Во втором случае сервер может быть каким-то
+                образом модифицирован для кражи ключей (если они передаются из приложения в плагин
+                через код сервера) или даже данных (в качестве последнего места для снятия дампов из
+                кеша, где они находятся в незашифрованном виде). Поэтому ваш плагин должен
+                убедиться, что он работает с не измененными двоичными файлами Firebird и вашим
+                приложением перед отправкой ключа в плагин, например, плагин может потребоваться от
+                них какой-то цифровой подписи. Кроме того, если используется сетевой доступ к
+                серверу, то хорошей идеей является проверка того, что сетевой канал зашифрован
+                (разбор вывода <code>IUtil::getFbVersion()</code>) или используется собственный ключ шифрования.
+                Вся эта работа должна выполняться в плагине (и в приложении, работающим с ним), то
+                есть алгоритм шифрования блока базы данных сам по себе может оказаться наиболее
+                простой частью плагина шифрования базы данных, особенно когда для него используется
+                некоторая стандартная библиотека.</para>
             <section xml:id="fbapi-interfaces-icryptkeycallback">
                 <info>
                     <title>ICryptKeyCallback</title>
@@ -4808,18 +4733,17 @@ void rollback(StatusType* status)
                         <keyword>ICryptKeyCallback</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>ICryptKeyCallback</primary></indexterm>
-
+                <indexterm>
+                    <primary>ICryptKeyCallback</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>ICryptKeyCallback</interfacename> должен
                         обеспечивать передачу ключа шифрования в плагин шифрования базы данных или
                         плагин хранителя ключа.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -4845,19 +4769,18 @@ unsigned callback(unsigned dataLength,
                         <keyword>IDbCryptInfo</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IDbCryptInfo</primary></indexterm>
-
+                <indexterm>
+                    <primary>IDbCryptInfo</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IDbCryptInfo</interfacename> передается движку
                             <interfacename>IDbCryptPlugin</interfacename>. Плагин может сохранить
                         этот интерфейс и использовать, когда это необходимо, для получения
                         дополнительной информации о базе данных.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -4866,7 +4789,8 @@ const char* getDatabaseFullPath(StatusType* status)
 ]]>
 </programlisting> возвращает полное (включая путь) имя первичного файла базы данных. </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
             <section xml:id="fbapi-interfaces-idbcryptplugin">
                 <info>
@@ -4875,17 +4799,16 @@ const char* getDatabaseFullPath(StatusType* status)
                         <keyword>IDbCryptPlugin</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IDbCryptPlugin</primary></indexterm>
-
+                <indexterm>
+                    <primary>IDbCryptPlugin</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IDbCryptPlugin</interfacename> является основным
                         интерфейсом плагина шифрования базы данных.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -4939,18 +4862,17 @@ void setInfo(StatusType* status,
 </programlisting> в этом методе плагин шифрования обычно сохраняет информационный интерфейс для
                                 будущего использования. </para>
                         </listitem>
-                    </orderedlist></para>
+                    </orderedlist>
+                </para>
             </section>
         </section>
         <section>
             <title>Хранитель ключа для плагина шифрования базы данных</title>
-
             <para>Этот тип плагина необходим для разграничения функциональности — плагин шифрования
                 базы данных имеет дело с фактическим шифрованием, держатель ключа решает вопросы,
                 связанные с предоставлением ему ключа безопасным способом. Плагин может получить
                 ключ из приложения или загрузить его каким-либо другим способом (вплоть до
                 использования флеш-устройства, вставленного в сервер при запуске Firebird).</para>
-
             <section xml:id="fbapi-interfaces-ikeyholderplugin">
                 <info>
                     <title>IKeyHolderPlugin</title>
@@ -4958,17 +4880,16 @@ void setInfo(StatusType* status,
                         <keyword>IKeyHolderPlugin</keyword>
                     </keywordset>
                 </info>
-
-                <indexterm><primary>IKeyHolderPlugin</primary></indexterm>
-
+                <indexterm>
+                    <primary>IKeyHolderPlugin</primary>
+                </indexterm>
                 <formalpara>
                     <title>Назначение:</title>
-
                     <para>Интерфейс <interfacename>IKeyHolderPlugin</interfacename> является
                         основным интерфейсом для плагина хранения ключей шифрования.</para>
                 </formalpara>
-
-                <para><orderedlist>
+                <para>
+                    <orderedlist>
                         <listitem>
                             <para/>
                             <para><programlisting language="cpp">
@@ -5046,18 +4967,15 @@ ICryptKeyCallback* chainHandle(StatusType* status)
     </section>
     <section>
         <title>Неинтерфейсные объекты, используемые в API</title>
-
         <note>
             <para>Они находятся в специальном заголовоке <filename>Message.h</filename> C++</para>
         </note>
-
         <para>Следующие 3 класса используются для представления типов DATE, TIME и TIMESTAMP
             (datetime) при использовании макроса FB_MESSAGE. Члены структуры данных, представляющие
             статическое сообщение, соответствуют полям типов FB_DATE/FB_TIME/ FB_TIMESTAMP, будут
             иметь тип одного из этих классов. Для получения доступа к полям даты и времени в
             статических сообщениях необходимо знать методы и члены класса (которые достаточно
             самоописательны, чтобы не описывать их здесь).</para>
-
         <section xml:id="fbapi-classes-fbdate">
             <info>
                 <title>FbDate</title>
@@ -5065,13 +4983,14 @@ ICryptKeyCallback* chainHandle(StatusType* status)
                     <keyword>FbDate</keyword>
                 </keywordset>
             </info>
-
-            <indexterm><primary>FbDate</primary></indexterm>
-
+            <indexterm>
+                <primary>FbDate</primary>
+            </indexterm>
             <para>Методы класса <classname>FbDate</classname>: <orderedlist>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 void decode(IUtil* util, 
             unsigned* year, 
@@ -5083,7 +5002,8 @@ void decode(IUtil* util,
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 unsigned getYear(IUtil* util)
 ]]>
@@ -5092,7 +5012,8 @@ unsigned getYear(IUtil* util)
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 unsigned getMonth(IUtil* util)
 ]]>
@@ -5101,7 +5022,8 @@ unsigned getMonth(IUtil* util)
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 unsigned getDay(IUtil* util)
 ]]>
@@ -5110,7 +5032,8 @@ unsigned getDay(IUtil* util)
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 void encode(IUtil* util, 
             unsigned year, 
@@ -5123,7 +5046,6 @@ void encode(IUtil* util,
                 </orderedlist>
             </para>
         </section>
-
         <section xml:id="fbapi-classes-fbtime">
             <info>
                 <title>FbTime</title>
@@ -5131,13 +5053,14 @@ void encode(IUtil* util,
                     <keyword>FbTime</keyword>
                 </keywordset>
             </info>
-
-            <indexterm><primary>FbTime</primary></indexterm>
-
+            <indexterm>
+                <primary>FbTime</primary>
+            </indexterm>
             <para>Методы класса <classname>FbTime</classname>: <orderedlist>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 void decode(IUtil* util, 
             unsigned* hours, 
@@ -5150,7 +5073,8 @@ void decode(IUtil* util,
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 unsigned getHours(IUtil* util)
 ]]>
@@ -5159,7 +5083,8 @@ unsigned getHours(IUtil* util)
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 unsigned getMinutes(IUtil* util)
 ]]>
@@ -5168,7 +5093,8 @@ unsigned getMinutes(IUtil* util)
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 unsigned getSeconds(IUtil* util)
 ]]>
@@ -5177,7 +5103,8 @@ unsigned getSeconds(IUtil* util)
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 unsigned getFractions(IUtil* util)
 ]]>
@@ -5186,7 +5113,8 @@ unsigned getFractions(IUtil* util)
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 void encode(IUtil* util, 
             unsigned hours, 
@@ -5200,7 +5128,6 @@ void encode(IUtil* util,
                 </orderedlist>
             </para>
         </section>
-
         <section xml:id="fbapi-classes-fbtimestamp">
             <info>
                 <title>FbTimestamp</title>
@@ -5208,13 +5135,14 @@ void encode(IUtil* util,
                     <keyword>FbTimestamp</keyword>
                 </keywordset>
             </info>
-
-            <indexterm><primary>FbTimestamp</primary></indexterm>
-
+            <indexterm>
+                <primary>FbTimestamp</primary>
+            </indexterm>
             <para>Члены класса <classname>FbTimestamp </classname>: <orderedlist>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 FbDate date;
 ]]>
@@ -5223,7 +5151,8 @@ FbDate date;
                     </listitem>
                     <listitem>
                         <para/>
-                        <para><programlisting language="cpp">
+                        <para>
+                            <programlisting language="cpp">
 <![CDATA[
 FbTime time;
 ]]>
@@ -5233,7 +5162,6 @@ FbTime time;
                 </orderedlist>
             </para>
         </section>
-
         <section xml:id="fbapi-objects-fbchar">
             <info>
                 <title>FbChar и FbVarChar</title>
@@ -5242,10 +5170,12 @@ FbTime time;
                     <keyword>FbVarChar</keyword>
                 </keywordset>
             </info>
-
-            <indexterm><primary>FbChar</primary></indexterm>
-            <indexterm><primary>FbVarChar</primary></indexterm>
-
+            <indexterm>
+                <primary>FbChar</primary>
+            </indexterm>
+            <indexterm>
+                <primary>FbVarChar</primary>
+            </indexterm>
             <para>Следующие два шаблона используются в статических сообщениях для представления
                 полей CHAR(<replaceable>N</replaceable>) и VARCHAR(<replaceable>N</replaceable>). <programlisting language="cpp">
 <![CDATA[
@@ -5272,7 +5202,6 @@ struct FbVarChar
     </section>
     <section>
         <title>Заключение</title>
-
         <para>В этом документе отсутствуют два типа плагинов — ExternalEngine и Trace. Информация о
             них будет доступна в следующем выпуске.</para>
     </section>
