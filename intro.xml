@@ -1,9 +1,11 @@
 <!DOCTYPE chapter>
 <preface xmlns="http://docbook.org/ns/docbook" version="5.0" xml:id="intro" xml:lang="ru">
+
     <info>
         <title>Введение</title>
     </info>
-    <para> Это руководство описывает объектно-ориентированную версию API Firebird 3.0. </para>
+
+    <para>Это руководство описывает объектно-ориентированную версию API Firebird 3.0. </para>
     <para>Данный документ является переводом файла <filename>doc/Using_OO_API.html</filename>,
         который входит в поставку Firebird.</para>
     <para>Описываемые интерфейсы находятся в файле
@@ -14,19 +16,47 @@
     <para> CLOOP — Cross Language Object Oriented Programming. Этот инструмент не входит в поставку
         Firebird. Его можно найти в исходных кодах <link xmlns:xlink="http://www.w3.org/1999/xlink"
             xlink:href="https://github.com/FirebirdSQL/firebird/tree/master/extern/cloop"/>. После
-        того как инструмент будет собран, можно сгенерировать API для вашего языка программирования.
-        Для Object pascal это делается следующей коммандой:
-        <programlisting>
+        того как инструмент будет собран, можно сгенерировать API для вашего языка программирования. </para>
+    <simplesect xml:id="intro-pascal">
+        <info>
+            <title>Генерация API для Pascal</title>
+        </info>
+        <para>Для Object Pascal файл с объектным API генерируется следующей командой:
+            <programlisting>
 cloop FirebirdInterface.idl pascal Firebird.pas Firebird --uses SysUtils \
   --interfaceFile Pascal.interface.pas \
   --implementationFile Pascal.implementation.pas \
   --exceptionClass FbException --prefix I \
   --functionsFile fb_get_master_interface.pas            
         </programlisting>
-        Файлы <filename>Pascal.interface.pas</filename>,
-            <filename>Pascal.implementation.pas</filename> и
-            <filename>fb_get_master_interface.pas</filename> можно найти по адресу <link
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            xlink:href="https://github.com/FirebirdSQL/firebird/tree/master/src/misc/pascal"/>. </para>
+            Файлы <filename>Pascal.interface.pas</filename>,
+                <filename>Pascal.implementation.pas</filename> и
+                <filename>fb_get_master_interface.pas</filename> можно найти по адресу <link
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xlink:href="https://github.com/FirebirdSQL/firebird/tree/master/src/misc/pascal"/>. </para>
 
+        <note>
+            <para>В данном случае для интерфейсов Firebird API будет добавлен префикс I, так как это
+                принято в Object Pascal.</para>
+        </note>
+
+        <para>В полученном файле <filename>Firebird.pas</filename> отсутствуют <code>isc_*</code>
+            константы. Эти константы для языков C/C++ можно найти под адресу <link
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xlink:href="https://github.com/FirebirdSQL/firebird/blob/B3_0_Release/src/include/consts_pub.h"
+            />. Для получения констант для языка Pascal воспользуемся AWK скриптом для
+            преобразования синтаксиса. В Windows вам потребуется установить Gawk for Windows или
+            воспользоваться Windows Subsystem for Linux (доступно в Windows 10). Это делается
+            следующей командой:
+            <programlisting>
+awk -f Pascal.Constants.awk consts_pub.h > const.pas           
+        </programlisting>
+        </para>
+        <para>Содержимое полученного файла необходимо скопировать в пустую секцию const файла
+                <filename>Firebird.pas</filename> сразу после implementation. Файл
+                <filename>Pascal.Constants.awk</filename>, можно найти по адресу <link
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xlink:href="https://github.com/FirebirdSQL/firebird/tree/B3_0_Release/src/misc/pascal"
+            />. </para>
+    </simplesect>
 </preface>

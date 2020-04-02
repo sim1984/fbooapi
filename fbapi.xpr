@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="16.1">
+<project version="21.0">
     <meta>
         <filters directoryPatterns="" filePatterns="" positiveFilePatterns="" showHiddenFiles="false"/>
         <options>
-            <serialized version="16.1" xml:space="preserve">
+            <serialized version="21.0" xml:space="preserve">
                 <serializableOrderedMap>
                     <entry>
                         <String>scenario.associations</String>
@@ -11,6 +11,21 @@
                             <scenarioAssociation>
                                 <field name="url">
                                     <String>fbapi.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>DocBook PDF FBDoc</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>ooapi.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -51,7 +66,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>file:/g:/fbdoc/fbapi/xsl/fo.xsl</String>
+                                    <String>file:/d:/fbdoc/fbapi/xsl/fo.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -112,7 +127,7 @@
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array>
-                                        <String>${frameworks}/docbook/xsl/extensions/xslthl-2.0.1.jar</String>
+                                        <String>${frameworks}/docbook/xsl/extensions/xslthl*.jar</String>
                                         <String>${frameworks}/docbook/xsl/extensions/saxon65.jar</String>
                                     </String-array>
                                 </field>
