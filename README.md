@@ -1,4 +1,7 @@
-Firebird OO API 3.0
+Firebird OO API
 ===================
 
-PDF — <https://github.com/sim1984/fbapi30/releases/download/0.95/fbapi.pdf>
+Firebird 3.0:
+
+* PDF — <https://github.com/sim1984/fbooapi/releases/download/1.0/fbapi30.pdf>
+* HTML — <https://github.com/sim1984/fbooapi/releases/download/1.0/fbapi30.html>
