@@ -5,3 +5,8 @@ Firebird 3.0:
 
 * PDF — <https://github.com/sim1984/fbooapi/releases/download/1.0/fbapi30.pdf>
 * HTML — <https://github.com/sim1984/fbooapi/releases/download/1.0/fbapi30.html>
+
+Firebird 4.0:
+
+* PDF — <https://github.com/sim1984/fbooapi/releases/download/1.0/fbapi40.pdf>
+* HTML — <https://github.com/sim1984/fbooapi/releases/download/1.0/fbapi40.html>
